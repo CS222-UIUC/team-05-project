@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "title": "The Witcher 3: Wild Hunt",
+        "genre": ["RPG", "Action"],
+        "platform": ["PC", "PS4", "Xbox One"]
+    },
+    {
+        "id": 2,
+        "title": "The Legend of Zelda: Breath of the Wild",
+        "genre": ["Action", "Adventure"],
+        "platform": ["Nintendo Switch"]
+    },
+    {
+        "id": 3,
+        "title": "Fortnite",
+        "genre": ["Battle Royale", "Shooter"],
+        "platform": ["PC", "PS4", "Xbox One", "Nintendo Switch"]
+    },
+    {
+        "id": 4,
+        "title": "Minecraft",
+        "genre": ["Sandbox", "Adventure"],
+        "platform": ["PC", "PS4", "Xbox One", "Nintendo Switch"]
+    }
+]
