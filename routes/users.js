@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const Game = require('../models/game');
 const bcrypt = require("bcryptjs");
 
 // user register
@@ -37,5 +38,42 @@ router.post("/login", async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+// add favorite
+router.post('/:userId/favorites', async (req, res) => {
+    const { gameId } = req.body;
+    try {
+      const user = await User.findById(req.params.userId);
+      if (!user.favorites.includes(gameId)) {
+        user.favorites.push(gameId);
+        await user.save();
+      }
+      res.json({ message: 'Game added to favorites.' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+  // delete favorite
+  router.delete('/:userId/favorites/:gameId', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId);
+      user.favorites = user.favorites.filter(id => id.toString() !== req.params.gameId);
+      await user.save();
+      res.json({ message: 'Game removed from favorites.' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+  // get user favorite list
+  router.get('/:userId/favorites', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId).populate('favorites');
+      res.json(user.favorites);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
 module.exports = router;
