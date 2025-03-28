@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GameRec</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar__container">
+            <a href="#" class="navbar__logo">GameRec</a>
+            <div class="navbar__links">
+                <a href="main.html" class="navbar__link active">Home</a>
+                <a href="#search" class="navbar__link">Search</a>
+                <a href="#favorites" class="navbar__link">Favorites</a>
+                <div class="navbar__auth">
+                    <a href="login.html" class="btn btn--login">Login</a>
+                    <a href="register.html" class="btn btn--primary">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container auth-container">
+        <div class="auth-card">
+            <h2>Login to GameRec</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--block">Login</button>
+            </form>
+            <p class="auth-switch">Don't have an account? <a href="register.html">Register here</a></p>
+        </div>
+    </main>
+
+    <script src="js/login.js"></script>
+    <script type="module">
+        import { AuthService } from './js/login.js';
+      
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const username = document.getElementById('username').value;
+          const password = document.getElementById('password').value;
+      
+          try {
+            await AuthService.login(username, password);
+            alert("Login successful!");
+            window.location.href = 'main.html';
+          } catch (error) {
+            alert(error.message);
+          }
+        });
+      </script>
+</body>
+</html>
