@@ -163,6 +163,21 @@ body {
     background: none;
     color: #ffffff;
     font-size: 1.2rem;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.btn--icon:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn--icon.active {
+    color: #ff4757;
+}
+
+.btn--icon.active:hover {
+    background-color: rgba(255, 71, 87, 0.1);
 }
 
 /* Responsive Design */
