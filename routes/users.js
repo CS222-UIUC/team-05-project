@@ -76,4 +76,47 @@ router.post('/:userId/favorites', async (req, res) => {
     }
   });
 
+  // get user info
+router.get("/:userId", async (req, res) => {
+  try {
+      const user = await User.findById(req.params.userId)
+          .select("-password_hash")  // don't return password
+          .populate("favorites");
+      if (!user) return res.status(404).json({ message: "User not found." });
+      res.json(user);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+// update user info
+router.put("/:userId", async (req, res) => {
+  const { username, email, password } = req.body;
+
+  try {
+      const user = await User.findById(req.params.userId);
+      if (!user) return res.status(404).json({ message: "User not found." });
+
+      // update username and email
+      if (username) user.username = username;
+      if (email) user.email = email;
+
+      // if update password, hash encode again
+      if (password) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          user.password_hash = hashedPassword;
+      }
+
+      const updatedUser = await user.save();
+
+      res.json({
+          userId: updatedUser._id,
+          username: updatedUser.username,
+          email: updatedUser.email
+      });
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
