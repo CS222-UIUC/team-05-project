@@ -245,3 +245,93 @@ body {
     color: #6c5ce7;
     text-decoration: none;
 }
+
+.auth-prompt {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    text-align: center;
+}
+
+.auth-prompt__content {
+    max-width: 500px;
+    padding: 2rem;
+}
+
+.auth-prompt h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.auth-prompt p {
+    color: #888;
+    margin-bottom: 2rem;
+}
+
+.btn--large {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+}
+
+.empty-state {
+    text-align: center;
+    color: #666;
+    padding: 4rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #6c5ce7;
+}
+
+.favorites-section {
+    width: 100%;
+}
+
+.navbar {
+    background-color: #2d2d2d;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.navbar__link {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.navbar__link:hover:not(.active) {
+    background-color: rgba(108, 92, 231, 0.1);
+    transform: translateY(-2px);
+}
+
+.navbar__link.active {
+    color: #6c5ce7;
+    font-weight: 600;
+}
+
+.navbar__link.active::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: #6c5ce7;
+    border-radius: 2px;
+}
+
+body:not(.home-page) .navbar {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid rgba(108, 92, 231, 0.2);
+}
