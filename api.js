@@ -31,6 +31,15 @@ export const removeFavorite = (userId, gameId) => request(`/users/${userId}/favo
 export const getFavorites = (userId) => request(`/users/${userId}/favorites`);
 export const getUser = (userId) => request(`/users/${userId}`);
 export const updateUser = (userId, data) => request(`/users/${userId}`, 'PUT', data);
+/*example uses:
+import { updateUser } from './api.js';
+
+await updateUser(userId, {
+    username: "new_username",
+    email: "new_email@example.com",
+    password: "newpassword123"
+});
+*/
 
 // game related
 export const getGames = () => request('/games');
