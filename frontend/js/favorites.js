@@ -1,5 +1,3 @@
-import { AuthService } from '../auth.js';
-
 document.addEventListener('DOMContentLoaded', async () => {
     const currentUser = AuthService.getCurrentUser();
     const authSection = document.getElementById('authSection');

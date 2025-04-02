@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-// get reviews for specific game
+// get reviews by game id
 router.get("/game/:gameId", async (req, res) => {
     try {
         const reviews = await Review.find({ game_id: req.params.gameId })
