@@ -32,7 +32,7 @@ export const getFavorites = (userId) => request(`/users/${userId}/favorites`);
 export const getUser = (userId) => request(`/users/${userId}`);
 export const updateUser = (userId, data) => request(`/users/${userId}`, 'PUT', data);
 /*example uses:
-import { updateUser } from './api.js';
+import { updateUser } from '../api.js';
 
 await updateUser(userId, {
     username: "new_username",
