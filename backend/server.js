@@ -14,7 +14,6 @@ app.use(cors());
 app.use("/api/games", require("./routes/games"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/reviews", require("./routes/reviews"));
-app.use("/api/recommendations", require("./routes/recommendations"));
 
 app.get("/", (req, res) => {
     res.send("GameRec web API active！");
