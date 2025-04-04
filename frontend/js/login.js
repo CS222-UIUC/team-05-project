@@ -1,33 +1,22 @@
+import { login } from '../api.js';
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Login Form Handler
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const user = {
-                username: document.getElementById('loginUsername').value,
-                password: document.getElementById('loginPassword').value
-            };
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            try {
-                const response = await fetch('http://localhost:3000/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(user)
-                });
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
 
-                const data = await response.json();
-                
-                if (response.ok) {
-                    localStorage.setItem('gameRecToken', data.token);
-                    window.location.href = 'index.html';
-                } else {
-                    alert(data.error || 'Login failed');
-                }
-            } catch (error) {
-                alert('Error connecting to server');
-            }
-        });
-    }
+        try {
+            const data = await login(username, password);
+            localStorage.setItem('gameRecToken', data.token || '');
+            localStorage.setItem('userId', data.userId);
+            localStorage.setItem('username', data.username);
+            alert("Login successful!");
+            window.location.href = 'main.html';
+        } catch (err) {
+            alert("Login failed: " + err.message);
+        }
+    });
 });

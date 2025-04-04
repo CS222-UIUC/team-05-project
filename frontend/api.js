@@ -16,7 +16,7 @@ async function request(url, method = 'GET', data) {
     const resData = await response.json();
 
     if (!response.ok) {
-        alert(resData.message || 'Request failed');
+        //alert(resData.message || 'Request failed');
         throw new Error(resData.message || 'Request failed');
     }
 
@@ -24,8 +24,8 @@ async function request(url, method = 'GET', data) {
 }
 
 // user related
-export const register = (username, email, password) => request('/users/register', 'POST', { username, email, password });
-export const login = (email, password) => request('/users/login', 'POST', { email, password });
+export const register = (username, password) => request('/users/register', 'POST', { username, password });
+export const login = (username, password) => request('/users/login', 'POST', { username, password });
 export const addFavorite = (userId, gameId) => request(`/users/${userId}/favorites`, 'POST', { gameId });
 export const removeFavorite = (userId, gameId) => request(`/users/${userId}/favorites/${gameId}`, 'DELETE');
 export const getFavorites = (userId) => request(`/users/${userId}/favorites`);

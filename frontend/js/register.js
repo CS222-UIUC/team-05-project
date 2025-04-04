@@ -1,33 +1,16 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Registration Form Handler
-    const registerForm = document.getElementById('registerForm');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+import { register } from '../api.js';
 
-            const user = {
-                username: document.getElementById('regUsername').value,
-                password: document.getElementById('regPassword').value
-            };
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-            try {
-                const response = await fetch('http://localhost:3000/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(user)
-                });
+    const username = document.getElementById('regUsername').value;
+    const password = document.getElementById('regPassword').value;
 
-                const data = await response.json();
-                
-                if (response.ok) {
-                    alert('Registration successful! Please login');
-                    window.location.href = 'login.html';
-                } else {
-                    alert(data.error || 'Registration failed');
-                }
-            } catch (error) {
-                alert('Error connecting to server');
-            }
-        });
+    try {
+        await register(username, password);
+        alert("Register successful!");
+        window.location.href = 'login.html';
+    } catch (error) {
+        alert("Registration failed: " + error.message);
     }
 });
