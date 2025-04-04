@@ -6,28 +6,32 @@ const bcrypt = require("bcryptjs");
 
 // user register
 router.post("/register", async (req, res) => {
-    const { username, email, password } = req.body;
+  const { username, password } = req.body;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({
-        username,
-        email,
-        password_hash: hashedPassword
-    });
+  try {
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+          return res.status(409).json({ message: "Username already exists" });
+      }
 
-    try {
-        const savedUser = await user.save();
-        res.status(201).json({userId: savedUser._id, username: savedUser.username});
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({
+          username,
+          password_hash: hashedPassword
+      });
+
+      const savedUser = await user.save();
+      res.status(201).json({ userId: savedUser._id, username: savedUser.username });
+  } catch (err) {
+      res.status(400).json({ message: err.message });
+  }
 });
 
 // user login
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ username });
         if (!user) return res.status(404).json({ message: "User not found" });
 
         const match = await bcrypt.compare(password, user.password_hash);
