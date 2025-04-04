@@ -1,0 +1,337 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+/* Utility Classes */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn--primary {
+    background-color: #6c5ce7;
+    color: white;
+}
+
+.btn--primary:hover {
+    background-color: #5b4bc4;
+}
+
+.btn--login {
+    background: none;
+    color: #ffffff;
+    margin-right: 15px;
+}
+
+/* Navigation Styles */
+.navbar {
+    background-color: #2d2d2d;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar__logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #6c5ce7;
+    text-decoration: none;
+}
+
+.navbar__links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar__link {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.navbar__link.active {
+    color: #6c5ce7;
+}
+
+/* Search Section */
+.search-section {
+    margin: 2rem 0;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 4px;
+    border: none;
+    background-color: #333;
+    color: white;
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+}
+
+.filter-select {
+    padding: 8px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+/* Game Grid */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.game-card {
+    background: #2d2d2d;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.game-card__image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.game-card__content {
+    padding: 1rem;
+}
+
+.game-card__title {
+    margin-bottom: 0.5rem;
+}
+
+.game-card__meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.game-card__description {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 1rem;
+}
+
+.game-card__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn--icon {
+    background: none;
+    color: #ffffff;
+    font-size: 1.2rem;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.btn--icon:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn--icon.active {
+    color: #ff4757;
+}
+
+.btn--icon.active:hover {
+    background-color: rgba(255, 71, 87, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar__links {
+        gap: 1rem;
+    }
+    
+    .game-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+/* Login and Register Page added */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.auth-card {
+    background: #2d2d2d;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-card h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    background: #333;
+    border: none;
+    border-radius: 4px;
+    color: white;
+}
+
+.btn--block {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #888;
+}
+
+.auth-switch a {
+    color: #6c5ce7;
+    text-decoration: none;
+}
+
+.auth-prompt {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    text-align: center;
+}
+
+.auth-prompt__content {
+    max-width: 500px;
+    padding: 2rem;
+}
+
+.auth-prompt h2 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.auth-prompt p {
+    color: #888;
+    margin-bottom: 2rem;
+}
+
+.btn--large {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+}
+
+.empty-state {
+    text-align: center;
+    color: #666;
+    padding: 4rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #6c5ce7;
+}
+
+.favorites-section {
+    width: 100%;
+}
+
+.navbar {
+    background-color: #2d2d2d;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.navbar__link {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.navbar__link:hover:not(.active) {
+    background-color: rgba(108, 92, 231, 0.1);
+    transform: translateY(-2px);
+}
+
+.navbar__link.active {
+    color: #6c5ce7;
+    font-weight: 600;
+}
+
+.navbar__link.active::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: #6c5ce7;
+    border-radius: 2px;
+}
+
+body:not(.home-page) .navbar {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid rgba(108, 92, 231, 0.2);
+}
