@@ -41,23 +41,7 @@
         </div>
     </main>
 
-    <script src="../js/login.js"></script>
-    <script type="module">
-        import { AuthService } from './js/login.js';
-      
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const username = document.getElementById('username').value;
-          const password = document.getElementById('password').value;
-      
-          try {
-            await AuthService.login(username, password);
-            alert("Login successful!");
-            window.location.href = 'main.html';
-          } catch (error) {
-            alert(error.message);
-          }
-        });
-      </script>
+    <script type="module" src="../js/login.js"></script>
+
 </body>
 </html>
