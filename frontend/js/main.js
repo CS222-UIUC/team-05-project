@@ -1,89 +1,80 @@
+// main.js
+
+import { addFavorite, removeFavorite } from '../api.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Check authentication status
     const token = localStorage.getItem('gameRecToken');
+    const userId = localStorage.getItem('userId');
     const authButtons = document.querySelector('.navbar__auth');
 
-    if (token) {
+    if (token && userId) {
         // If logged in, show logout button
         authButtons.innerHTML = `
-            <button class="btn btn--login" onclick="logout()">Logout</button>
+            <button class="btn btn--login" id="logoutBtn">Logout</button>
         `;
+        document.getElementById('logoutBtn').addEventListener('click', logout);
     }
 
     // Initialize favorite buttons
     initializeFavoriteButtons();
-    // Initialize favorites
-    initializeFavorites();
 });
 
 function logout() {
     localStorage.removeItem('gameRecToken');
-    window.location.href = 'index.html';
+    localStorage.removeItem('userId');
+    // Navigate to a page, e.g.:
+    window.location.href = './frontend/html/login.html';
 }
 
-// Initialize favorite buttons
+// Initialize favorite buttons on any .game-card in the DOM
 function initializeFavoriteButtons() {
-    // Add favorite buttons to all game cards
     document.querySelectorAll('.game-card').forEach(card => {
-        const actionsDiv = card.querySelector('.game-card__actions');
-        const existingHeartBtn = actionsDiv.querySelector('.btn--icon');
-        
-        if (existingHeartBtn) {
-            // If the heart button already exists, add favorite functionality
-            existingHeartBtn.classList.add('favorite-btn');
-            existingHeartBtn.dataset.gameId = card.querySelector('.game-card__title').textContent;
-            existingHeartBtn.onclick = function() {
-                toggleFavorite(this.dataset.gameId, this);
+        const heartBtn = card.querySelector('.btn--icon');
+        if (heartBtn) {
+            // Put an ID or some unique key. Right now, using the title text as ID is not ideal,
+            // but for demonstration it's used in your code. 
+            // If you have a real gameId from the DB, store it in data attributes:
+            const gameId = card.querySelector('.game-card__title').textContent;
+            heartBtn.classList.add('favorite-btn');
+            heartBtn.dataset.gameId = gameId;
+
+            heartBtn.onclick = function () {
+                toggleFavorite(gameId, heartBtn);
             };
         }
     });
 }
 
-// Initialize favorites
-function initializeFavorites() {
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    updateFavoriteButtons(favorites);
-}
-
-// Update all favorite buttons
-function updateFavoriteButtons(favorites) {
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
-        const gameId = btn.dataset.gameId;
-        if (favorites.includes(gameId)) {
-            btn.classList.add('active');
-            btn.querySelector('i').classList.remove('far');
-            btn.querySelector('i').classList.add('fas');
-        } else {
-            btn.classList.remove('active');
-            btn.querySelector('i').classList.remove('fas');
-            btn.querySelector('i').classList.add('far');
-        }
-    });
-}
-
 // Handle favorite/unfavorite
-function toggleFavorite(gameId, button) {
-    if (!localStorage.getItem('gameRecToken')) {
+async function toggleFavorite(gameId, button) {
+    const token = localStorage.getItem('gameRecToken');
+    const userId = localStorage.getItem('userId');
+    
+    if (!token || !userId) {
         alert('Please login to favorite games!');
         return;
     }
 
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const index = favorites.indexOf(gameId);
-
-    if (index === -1) {
-        // Add favorite
-        favorites.push(gameId);
-        button.classList.add('active');
-        button.querySelector('i').classList.remove('far');
-        button.querySelector('i').classList.add('fas');
-    } else {
-        // Unfavorite
-        favorites.splice(index, 1);
-        button.classList.remove('active');
-        button.querySelector('i').classList.remove('fas');
-        button.querySelector('i').classList.add('far');
+    // If the button is not yet active, that means we want to ADD favorite
+    const isActive = button.classList.contains('active');
+    try {
+        if (!isActive) {
+            // Add favorite to DB
+            await addFavorite(userId, gameId);
+            button.classList.add('active');
+            button.querySelector('i').classList.remove('far');
+            button.querySelector('i').classList.add('fas');
+        } else {
+            // Remove favorite
+            // (We don’t actually have a real ID for the game here if you’re using the text as ID,
+            // so in a real scenario, gameId should be the DB’s _id. Adjust accordingly!)
+            await removeFavorite(userId, gameId);
+            button.classList.remove('active');
+            button.querySelector('i').classList.remove('fas');
+            button.querySelector('i').classList.add('far');
+        }
+    } catch (error) {
+        alert('Failed to update favorite');
     }
-
-    localStorage.setItem('favorites', JSON.stringify(favorites));
 }

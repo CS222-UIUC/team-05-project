@@ -1,6 +1,7 @@
+// api.js
 const BASE_URL = 'http://localhost:5000/api';
 
-async function request(url, method = 'GET', data) {
+export async function request(url, method = 'GET', data) {
     const token = localStorage.getItem('gameRecToken');
 
     const options = {

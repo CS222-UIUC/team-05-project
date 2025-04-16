@@ -5,7 +5,25 @@ const Game = require("../models/game");
 // get all the games 
 router.get("/", async (req, res) => {
     try {
-        const games = await Game.find();
+        const { title, genre, rating } = req.query;
+        const query = {};
+
+        if (title) {
+            // Using regex for partial match (case-insensitive)
+            query.title = new RegExp(title, 'i');
+        }
+        if (genre) {
+            query.genre = genre;
+        }
+        if (rating) {
+            // e.g., rating >= provided
+            const min = parseInt(rating, 10);
+            if (!isNaN(min)) {
+                query.rating = { $gte: min };
+            }
+        }
+
+        const games = await Game.find(query);
         res.json(games);
     } catch (err) {
         res.status(500).json({ message: err.message });
