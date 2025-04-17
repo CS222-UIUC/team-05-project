@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (token && userId) {
         // Show logout button
         authSection.innerHTML = `
-            <button class="btn btn--login" id="logoutBtn">Logout</button>
+            <button class="btn btn--primary" id="logoutBtn">Logout</button>
         `;
         document.getElementById('logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('gameRecToken');
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         authSection.innerHTML = `
             <a href="login.html" class="btn btn--login">Login</a>
+            <a href="register.html" class="btn btn--primary">Sign Up</a>
         `;
         loginPrompt.style.display = 'flex';
     }
