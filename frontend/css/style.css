@@ -409,3 +409,29 @@ body:not(.home-page) .navbar {
         text-align: center;
     }
 }
+
+.star {
+    font-size: 1.2em;
+    margin-right: 1px;
+    color: #ccc;
+}
+  
+.star.full {
+    color: gold;
+}
+  
+.star.partial {
+    background: linear-gradient(90deg, gold var(--percent), #ccc var(--percent));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+.score {
+    margin-left: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #ccc;
+}
+  
