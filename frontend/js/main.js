@@ -2,7 +2,8 @@
 import {
     getGames,
     addFavorite,
-    removeFavorite
+    removeFavorite,
+    getFavorites
   } from '../api.js';
   
   /* ---------------- auth buttons ---------------- */
@@ -46,7 +47,7 @@ import {
             <div class="game-card__content">
               <h3 class="game-card__title">${g.title}</h3>
               <div class="game-card__meta">
-                <span class="rating">${'★'.repeat(g.rating || 0)}</span>
+                <span class="rating">${(g.rating || 0).toFixed(1)} ${renderStars(g.rating)}</span>
                 <span class="genre">${g.genre || ''}</span>
               </div>
               <p class="game-card__description">
@@ -71,22 +72,43 @@ import {
       grid.innerHTML = `<p style="color:#f66">${err.message}</p>`;
     }
   }
+
+  /* ---------------- showing stars ---------------- */
+  function renderStars(rating = 0) {
+    const full = Math.floor(rating);
+    return '★'.repeat(full) + '☆'.repeat(5 - full);
+  }
   
   /* ---------------- favourites ---------------- */
-  function hookFavouriteButtons () {
+  async function hookFavouriteButtons () {
+    const token  = localStorage.getItem('gameRecToken');
+    const userId = localStorage.getItem('userId');
+  
+    let favoriteIds = [];
+  
+    if (token && userId) {
+      try {
+        const favorites = await getFavorites(userId);
+        favoriteIds = favorites.map(f => f._id);
+      } catch (err) {
+        console.warn('Failed to load favorites, fallback to empty list');
+      }
+    }
+  
     document.querySelectorAll('.favorite-btn').forEach(btn => {
       const gameId = btn.dataset.id;
+      const icon   = btn.querySelector('i');
+  
+      const isFavorite = favoriteIds.includes(gameId);
+      if (isFavorite) icon.classList.replace('far', 'fas');
+  
       btn.addEventListener('click', async () => {
-        const token  = localStorage.getItem('gameRecToken');
-        const userId = localStorage.getItem('userId');
         if (!token || !userId) {
           alert('Please login to favourite games!');
           return;
         }
   
-        const icon   = btn.querySelector('i');
         const active = icon.classList.contains('fas');
-  
         try {
           if (!active) {
             await addFavorite(userId, gameId);
@@ -101,6 +123,7 @@ import {
       });
     });
   }
+  
   
   /* ---------------- bootstrap ---------------- */
   document.addEventListener('DOMContentLoaded', () => {
