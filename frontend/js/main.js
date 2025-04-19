@@ -27,50 +27,68 @@ import {
   }
   
   /* ---------------- games list ---------------- */
+  let allGames = [];
+
   async function loadGames () {
     const grid = document.querySelector('.game-grid');
     grid.innerHTML = '<p style="color:#888">Loading…</p>';
   
     try {
-      const games = await getGames();
-      if (!games.length) {
+      allGames = await getGames();
+      if (!allGames.length) {
         grid.innerHTML = '<p style="color:#888">No games in database.</p>';
         return;
       }
-  
-      grid.innerHTML = '';            // clear placeholder
-      games.forEach(g => {
-        grid.insertAdjacentHTML('beforeend', `
-          <div class="game-card">
-            <div class="game-card__image"
-                 style="background-image:url('${g.imageUrl || 'placeholder.jpg'}')"></div>
-            <div class="game-card__content">
-              <h3 class="game-card__title">${g.title}</h3>
-              <div class="game-card__meta">
-                <span class="rating">${(g.rating || 0).toFixed(1)} ${renderStars(g.rating)}</span>
-                <span class="genre">${g.genre || ''}</span>
-              </div>
-              <p class="game-card__description">
-                ${(g.description || '').slice(0, 90)}…
-              </p>
-              <div class="game-card__actions">
-                <button class="btn btn--icon favorite-btn" data-id="${g._id}">
-                  <i class="far fa-heart"></i>
-                </button>
-                <a class="btn btn--primary"
-                   style="text-decoration:none"
-                   href="./frontend/html/detail.html?id=${g._id}">
-                   Details
-                </a>
-              </div>
-            </div>
-          </div>`);
-      });
-  
-      hookFavouriteButtons();         // after DOM is in place
-    } catch (err) {
+      applyFilters();
+      } catch (err) {
       grid.innerHTML = `<p style="color:#f66">${err.message}</p>`;
     }
+  }
+
+  function applyFilters() {
+    const grid = document.querySelector('.game-grid');
+    const searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
+    const genreValue = document.getElementById('genreFilter').value;
+    const ratingValue = parseInt(document.getElementById('ratingFilter').value);
+  
+    const filtered = allGames.filter(game => {
+      const matchesTitle = game.title.toLowerCase().includes(searchValue);
+      const matchesGenre = !genreValue || game.genre === genreValue;
+      const matchesRating = !ratingValue || (game.rating >= ratingValue);
+      return matchesTitle && matchesGenre && matchesRating;
+    });
+  
+    grid.innerHTML = '';
+  
+    if (!filtered.length) {
+      grid.innerHTML = '<p style="color:#888">No games match your filters.</p>';
+      return;
+    }
+  
+    filtered.forEach(g => {
+      grid.insertAdjacentHTML('beforeend', `
+        <div class="game-card">
+          <div class="game-card__image" style="background-image:url('${g.imageUrl || 'placeholder.jpg'}')"></div>
+          <div class="game-card__content">
+            <h3 class="game-card__title">${g.title}</h3>
+            <div class="game-card__meta">
+              <span class="rating">${(g.rating || 0).toFixed(1)} ${renderStars(g.rating)}</span>
+              <span class="genre">${g.genre || ''}</span>
+            </div>
+            <p class="game-card__description">
+              ${(g.description || '').slice(0, 90)}…
+            </p>
+            <div class="game-card__actions">
+              <button class="btn btn--icon favorite-btn" data-id="${g._id}">
+                <i class="far fa-heart"></i>
+              </button>
+              <a class="btn btn--primary" href="./frontend/html/detail.html?id=${g._id}" style="text-decoration: none;">Details</a>
+            </div>
+          </div>
+        </div>`);
+    });
+  
+    hookFavouriteButtons()   // after DOM is in place
   }
 
   /* ---------------- showing stars ---------------- */
@@ -129,4 +147,8 @@ import {
   document.addEventListener('DOMContentLoaded', () => {
     updateAuthButtons();
     loadGames();
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('genreFilter').addEventListener('change', applyFilters);
+    document.getElementById('ratingFilter').addEventListener('change', applyFilters);
   });
