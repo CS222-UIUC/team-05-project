@@ -13,11 +13,11 @@ import {
     const userId = localStorage.getItem('userId');
   
     if (token && userId) {
-      nav.innerHTML = `<button class="btn btn--login" id="logoutBtn">Logout</button>`;
+      nav.innerHTML = `<button class="btn btn--primary" id="logoutBtn">Logout</button>`;
       document.getElementById('logoutBtn').addEventListener('click', () => {
         localStorage.removeItem('gameRecToken');
         localStorage.removeItem('userId');
-        updateAuthButtons();
+        window.location.reload();
       });
     } else {
       nav.innerHTML = `
@@ -104,7 +104,7 @@ import {
   
       btn.addEventListener('click', async () => {
         if (!token || !userId) {
-          alert('Please login to favourite games!');
+          window.location.href = `./frontend/html/favorites.html?redirect=main`;
           return;
         }
   

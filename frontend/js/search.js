@@ -12,7 +12,7 @@ function updateAuthButtons () {
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('gameRecToken');
       localStorage.removeItem('userId');
-      updateAuthButtons();
+      window.location.reload();
       // stay on page or redirect as you wish
     });
   } else {
