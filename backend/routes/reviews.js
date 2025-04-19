@@ -27,7 +27,15 @@ router.get("/game/:gameId", async (req, res) => {
 
 // creat review
 router.post("/", async (req, res) => {
-    const review = new Review(req.body);
+    const { user_id, game_id, rating, review_text } = req.body;
+
+    const review = new Review({
+        user_id,
+        game_id,
+        rating,
+        review_text
+    });
+
     try {
         const savedReview = await review.save();
         res.status(201).json(savedReview);

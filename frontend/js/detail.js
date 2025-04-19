@@ -112,9 +112,9 @@ import {
         div.innerHTML = `
           <p class="review__meta">
             <strong>${r.user_id?.username || 'Anon'}</strong>
-            – ${'★'.repeat(r.rating)}
+            – ${'★'.repeat(r.rating) + '☆'.repeat(5 - r.rating)}
           </p>
-          <p>${r.comment}</p>`;
+          <p>${r.review_text}</p>`;
         box.appendChild(div);
       });
     } catch (err) {
