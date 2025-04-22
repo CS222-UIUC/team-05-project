@@ -10,11 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const data = await login(username, password);
-            localStorage.setItem('gameRecToken', data.token || '');
+            localStorage.setItem('gameRecToken', data.token || 'Logged In');
             localStorage.setItem('userId', data.userId);
             localStorage.setItem('username', data.username);
             alert("Login successful!");
-            window.location.href = 'main.html';
+            window.location.href = 'favorites.html';
         } catch (err) {
             alert("Login failed: " + err.message);
         }

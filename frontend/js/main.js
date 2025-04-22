@@ -1,80 +1,109 @@
-// main.js
-
-import { addFavorite, removeFavorite } from '../api.js';
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Check authentication status
-    const token = localStorage.getItem('gameRecToken');
+/* frontend/js/main.js */
+import {
+    getGames,
+    addFavorite,
+    removeFavorite
+  } from '../api.js';
+  
+  /* ---------------- auth buttons ---------------- */
+  function updateAuthButtons () {
+    const nav = document.querySelector('.navbar__auth');
+    const token  = localStorage.getItem('gameRecToken');
     const userId = localStorage.getItem('userId');
-    const authButtons = document.querySelector('.navbar__auth');
-
+  
     if (token && userId) {
-        // If logged in, show logout button
-        authButtons.innerHTML = `
-            <button class="btn btn--login" id="logoutBtn">Logout</button>
-        `;
-        document.getElementById('logoutBtn').addEventListener('click', logout);
+      nav.innerHTML = `<button class="btn btn--login" id="logoutBtn">Logout</button>`;
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('gameRecToken');
+        localStorage.removeItem('userId');
+        updateAuthButtons();
+      });
+    } else {
+      nav.innerHTML = `
+        <a href="./frontend/html/login.html"    class="btn btn--login">Login</a>
+        <a href="./frontend/html/register.html" class="btn btn--primary">Sign Up</a>`;
     }
-
-    // Initialize favorite buttons
-    initializeFavoriteButtons();
-});
-
-function logout() {
-    localStorage.removeItem('gameRecToken');
-    localStorage.removeItem('userId');
-    // Navigate to a page, e.g.:
-    window.location.href = './frontend/html/login.html';
-}
-
-// Initialize favorite buttons on any .game-card in the DOM
-function initializeFavoriteButtons() {
-    document.querySelectorAll('.game-card').forEach(card => {
-        const heartBtn = card.querySelector('.btn--icon');
-        if (heartBtn) {
-            // Put an ID or some unique key. Right now, using the title text as ID is not ideal,
-            // but for demonstration it's used in your code. 
-            // If you have a real gameId from the DB, store it in data attributes:
-            const gameId = card.querySelector('.game-card__title').textContent;
-            heartBtn.classList.add('favorite-btn');
-            heartBtn.dataset.gameId = gameId;
-
-            heartBtn.onclick = function () {
-                toggleFavorite(gameId, heartBtn);
-            };
-        }
-    });
-}
-
-// Handle favorite/unfavorite
-async function toggleFavorite(gameId, button) {
-    const token = localStorage.getItem('gameRecToken');
-    const userId = localStorage.getItem('userId');
-    
-    if (!token || !userId) {
-        alert('Please login to favorite games!');
-        return;
-    }
-
-    // If the button is not yet active, that means we want to ADD favorite
-    const isActive = button.classList.contains('active');
+  }
+  
+  /* ---------------- games list ---------------- */
+  async function loadGames () {
+    const grid = document.querySelector('.game-grid');
+    grid.innerHTML = '<p style="color:#888">Loading…</p>';
+  
     try {
-        if (!isActive) {
-            // Add favorite to DB
-            await addFavorite(userId, gameId);
-            button.classList.add('active');
-            button.querySelector('i').classList.remove('far');
-            button.querySelector('i').classList.add('fas');
-        } else {
-            // Remove favorite
-            // (We don’t actually have a real ID for the game here if you’re using the text as ID,
-            // so in a real scenario, gameId should be the DB’s _id. Adjust accordingly!)
-            await removeFavorite(userId, gameId);
-            button.classList.remove('active');
-            button.querySelector('i').classList.remove('fas');
-            button.querySelector('i').classList.add('far');
-        }
-    } catch (error) {
-        alert('Failed to update favorite');
+      const games = await getGames();
+      if (!games.length) {
+        grid.innerHTML = '<p style="color:#888">No games in database.</p>';
+        return;
+      }
+  
+      grid.innerHTML = '';            // clear placeholder
+      games.forEach(g => {
+        grid.insertAdjacentHTML('beforeend', `
+          <div class="game-card">
+            <div class="game-card__image"
+                 style="background-image:url('${g.imageUrl || 'placeholder.jpg'}')"></div>
+            <div class="game-card__content">
+              <h3 class="game-card__title">${g.title}</h3>
+              <div class="game-card__meta">
+                <span class="rating">${'★'.repeat(g.rating || 0)}</span>
+                <span class="genre">${g.genre || ''}</span>
+              </div>
+              <p class="game-card__description">
+                ${(g.description || '').slice(0, 90)}…
+              </p>
+              <div class="game-card__actions">
+                <button class="btn btn--icon favorite-btn" data-id="${g._id}">
+                  <i class="far fa-heart"></i>
+                </button>
+                <a class="btn btn--primary"
+                   style="text-decoration:none"
+                   href="./frontend/html/detail.html?id=${g._id}">
+                   Details
+                </a>
+              </div>
+            </div>
+          </div>`);
+      });
+  
+      hookFavouriteButtons();         // after DOM is in place
+    } catch (err) {
+      grid.innerHTML = `<p style="color:#f66">${err.message}</p>`;
     }
-}
+  }
+  
+  /* ---------------- favourites ---------------- */
+  function hookFavouriteButtons () {
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+      const gameId = btn.dataset.id;
+      btn.addEventListener('click', async () => {
+        const token  = localStorage.getItem('gameRecToken');
+        const userId = localStorage.getItem('userId');
+        if (!token || !userId) {
+          alert('Please login to favourite games!');
+          return;
+        }
+  
+        const icon   = btn.querySelector('i');
+        const active = icon.classList.contains('fas');
+  
+        try {
+          if (!active) {
+            await addFavorite(userId, gameId);
+            icon.classList.replace('far', 'fas');
+          } else {
+            await removeFavorite(userId, gameId);
+            icon.classList.replace('fas', 'far');
+          }
+        } catch (err) {
+          alert('Failed to update favourite');
+        }
+      });
+    });
+  }
+  
+  /* ---------------- bootstrap ---------------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    updateAuthButtons();
+    loadGames();
+  });
