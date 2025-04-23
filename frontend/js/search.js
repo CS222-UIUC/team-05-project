@@ -70,16 +70,22 @@ function renderSearchResults (games) {
   games.forEach(g => {
     const card = `
       <div class="game-card">
-        <div class="game-card__image" style="background-image:url('${g.imageUrl || 'placeholder.jpg'}')"></div>
+        <div class="game-card__image"
+             style="background-image:url('${g.imageUrl || 'placeholder.jpg'}')"></div>
         <div class="game-card__content">
           <h3 class="game-card__title">${g.title}</h3>
           <div class="game-card__meta">
             <span class="rating">${(g.rating || 0).toFixed(1)} ${renderStars(g.rating)}</span>
             <span class="genre">${g.genre || ''}</span>
           </div>
-          <button class="btn btn--icon favorite-btn" data-game-id="${g._id}">
-            <i class="far fa-heart"></i>
-          </button>
+          <div class="game-card__actions">
+            <button class="btn btn--icon favorite-btn" data-game-id="${g._id}">
+              <i class="far fa-heart"></i>
+            </button>
+            <a class="btn btn--primary" 
+               href="detail.html?id=${g._id}"                    
+               style="text-decoration:none;">Details</a>
+          </div>
         </div>
       </div>`;
     root.insertAdjacentHTML('beforeend', card);
