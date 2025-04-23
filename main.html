@@ -29,21 +29,21 @@
         <!-- Search Section -->
         <section class="search-section">
             <div class="search-box">
-                <input type="text" placeholder="Search games...">
+                <input type="text" id="searchInput" placeholder="Search games..." />
                 <button class="btn btn--primary">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
-            <div class="filters">
-                <select class="filter-select">
-                    <option>All Genres</option>
-                    <option>Action</option>
-                    <option>RPG</option>
+                <select id="genreFilter" class="filter-select">
+                    <option value="">All Genres</option>
+                    <option value="Action">Action</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="RPG">RPG</option>
                 </select>
-                <select class="filter-select">
-                    <option>Any Rating</option>
-                    <option>4+ Stars</option>
-                    <option>3+ Stars</option>
+                <select id="ratingFilter" class="filter-select">
+                    <option value="0">Any Rating</option>
+                    <option value="4">4+ Stars</option>
+                    <option value="3">3+ Stars</option>
                 </select>
             </div>
         </section>

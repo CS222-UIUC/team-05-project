@@ -5,7 +5,8 @@ import {
     getGameReviews,
     createReview,
     addFavorite,
-    removeFavorite
+    removeFavorite,
+    getFavorites
   } from '../api.js';
   
   /* ----------------- bootstrap ----------------- */
@@ -40,23 +41,33 @@ import {
     document.getElementById('gameTitle').textContent       = game.title;
     document.getElementById('gameGenre').textContent       = `Genre: ${game.genre}`;
     document.getElementById('gamePlatform').textContent    = `Platform: ${game.platform || 'N/A'}`;
-    document.getElementById('gameRating').textContent      =
-      `Rating: ${'★'.repeat(game.rating || 0)}`;
+    const ratingContainer = document.getElementById('gameRating');
+    ratingContainer.innerHTML = renderStarRating(game.rating || 0);
     document.getElementById('gameDescription').textContent = game.description || 'No description.';
   }
   
   /* ---------- favourites ---------- */
-  function prepareFavouriteToggle(gameId) {
+  async function prepareFavouriteToggle(gameId) {
     const btn    = document.getElementById('favoriteBtn');
     const icon   = btn.querySelector('i');
     const userId = localStorage.getItem('userId');
     const token  = localStorage.getItem('gameRecToken');
   
-    // naive local cache check (optional: fetch /favorites for accuracy)
-    let active = JSON.parse(localStorage.getItem('favorites') || '[]')
+    let active = false;
+
+    if (token && userId) {
+      try {
+        const favorites = await getFavorites(userId);
+        active = favorites.some(g => g._id === gameId);
+      } catch (err) {
+        console.warn('Failed to load favorites, falling back to localStorage');
+        active = JSON.parse(localStorage.getItem('favorites') || '[]')
                     .includes(gameId);
-    updateIcon(active);
+      }
+    }
   
+    updateIcon(active);
+
     btn.addEventListener('click', async () => {
       if (!token || !userId) {
         alert('Please login to favourite games!');
@@ -101,9 +112,9 @@ import {
         div.innerHTML = `
           <p class="review__meta">
             <strong>${r.user_id?.username || 'Anon'}</strong>
-            – ${'★'.repeat(r.rating)}
+            – ${'★'.repeat(r.rating) + '☆'.repeat(5 - r.rating)}
           </p>
-          <p>${r.comment}</p>`;
+          <p>${r.review_text}</p>`;
         box.appendChild(div);
       });
     } catch (err) {
@@ -160,3 +171,22 @@ import {
         <a href="register.html" class="btn btn--primary">Sign Up</a>`;
     }
   }
+
+  function renderStarRating(score) {
+    const fullStars = Math.floor(score);
+    const partial = score - fullStars;
+    let starsHTML = '';
+  
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        starsHTML += '<i class="fas fa-star star full"></i>';
+      } else if (i === fullStars && partial > 0) {
+        starsHTML += `<i class="fas fa-star star partial" style="--percent:${partial * 100}%"></i>`;
+      } else {
+        starsHTML += '<i class="far fa-star star"></i>';
+      }
+    }
+  
+    return `Rating: ${starsHTML} <span class="score">${score.toFixed(1)}</span>`;
+  }
+  

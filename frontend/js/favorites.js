@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('gameRecToken');
             localStorage.removeItem('userId');
-            window.location.href = 'login.html';
+            window.location.reload();
         });
 
         favoritesSection.style.display = 'block';
@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadFavorites(userId) {
     try {
-        // Get all favorites for this user
         const favorites = await getFavorites(userId);
         renderFavorites(favorites);
     } catch (error) {
@@ -56,22 +55,24 @@ function renderFavorites(favorites) {
     }
 
     favorites.forEach(game => {
-        // game will be a full object if you used .populate('favorites') in your user route
-        // That means game._id, game.title, game.imageUrl, etc. should exist
-        const ratingStars = '★'.repeat(game.rating || 0);
-
         const gameCard = `
             <div class="game-card">
-                <div class="game-card__image" style="background-image: url('${game.imageUrl || 'placeholder.jpg'}');"></div>
+                <div class="game-card__image" style="background-image:url('${game.imageUrl || 'placeholder.jpg'}')"></div>
                 <div class="game-card__content">
                     <h3 class="game-card__title">${game.title}</h3>
                     <div class="game-card__meta">
-                        <span class="rating">${ratingStars}</span>
+                        <span class="rating">${(game.rating || 0).toFixed(1)} ${renderStars(game.rating)}</span>
                         <span class="genre">${game.genre || ''}</span>
                     </div>
-                    <button class="btn btn--icon active" data-game-id="${game._id}">
-                        <i class="fas fa-heart"></i>
-                    </button>
+                    <p class="game-card__description">
+                        ${(game.description || '').slice(0, 90)}…
+                    </p>
+                    <div class="game-card__actions">
+                        <button class="btn btn--icon favorite-btn" data-id="${game._id}">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <a class="btn btn--primary" href="./detail.html?id=${game._id}" style="text-decoration: none;">Details</a>
+                    </div>
                 </div>
             </div>
         `;
@@ -79,22 +80,27 @@ function renderFavorites(favorites) {
     });
 
     // Attach remove favorite logic
-    document.querySelectorAll('.btn--icon.active').forEach(btn => {
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
+            const token = localStorage.getItem('gameRecToken');
+            const userId = localStorage.getItem('userId');
+            if (!token || !userId) {
+                alert('Please login to remove favorites!');
+                return;
+            }
+            const gameId = btn.getAttribute('data-id');
             try {
-                const token = localStorage.getItem('gameRecToken');
-                const userId = localStorage.getItem('userId');
-                if (!token || !userId) {
-                    alert('Please login to remove favorites!');
-                    return;
-                }
-                const gameId = btn.getAttribute('data-game-id');
                 await removeFavorite(userId, gameId);
-                // reload or remove from the DOM
                 btn.closest('.game-card').remove();
             } catch (error) {
                 alert('Failed to remove favorite');
             }
         });
     });
+}
+
+function renderStars(rating = 0) {
+    const full = Math.floor(rating);
+    const empty = 5 - full;
+    return '★'.repeat(full) + '☆'.repeat(empty);
 }

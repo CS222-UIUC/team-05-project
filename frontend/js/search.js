@@ -12,7 +12,7 @@ function updateAuthButtons () {
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('gameRecToken');
       localStorage.removeItem('userId');
-      updateAuthButtons();
+      window.location.reload();
       // stay on page or redirect as you wish
     });
   } else {
@@ -27,6 +27,12 @@ function updateAuthButtons () {
 document.addEventListener('DOMContentLoaded', () => {
   updateAuthButtons();
 
+  ['genreFilter', 'ratingFilter'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+    });
+  });
+  
   document.getElementById('searchForm').addEventListener('submit', async e => {
     e.preventDefault();
     const title  = document.getElementById('searchInput').value.trim();
@@ -50,6 +56,12 @@ async function searchGames (title, genre, rating) {
   return await request(`/games?${qs.toString()}`, 'GET');
 }
 
+/* ---------------- showing stars ---------------- */
+function renderStars(rating = 0) {
+  const full = Math.floor(rating);
+  return '★'.repeat(full) + '☆'.repeat(5 - full);
+}
+
 /* -------------  results / favourite toggles ------------- */
 function renderSearchResults (games) {
   const root = document.getElementById('searchResults');
@@ -62,7 +74,7 @@ function renderSearchResults (games) {
         <div class="game-card__content">
           <h3 class="game-card__title">${g.title}</h3>
           <div class="game-card__meta">
-            <span class="rating">${'★'.repeat(g.rating || 0)}</span>
+            <span class="rating">${(g.rating || 0).toFixed(1)} ${renderStars(g.rating)}</span>
             <span class="genre">${g.genre || ''}</span>
           </div>
           <button class="btn btn--icon favorite-btn" data-game-id="${g._id}">

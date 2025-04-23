@@ -147,14 +147,15 @@ export const getGameReviews = (gameId) => request(`/reviews/game/${gameId}`);
 
 /**
  * Create a new review
- * @param {string} user - User ID
- * @param {string} game - Game ID
+ * @param {string} user_id - User ID
+ * @param {string} game_id - Game ID
  * @param {number} rating - Rating (typically 1-5)
  * @param {string} comment - Review text
  * @returns {Promise<object>} Created review
  */
-export const createReview = (user, game, rating, comment) => request('/reviews', 'POST', { user, game, rating, comment });
-
+export const createReview = (user_id, game_id, rating, review_text) =>
+    request('/reviews', 'POST', { user_id, game_id, rating, review_text });
+  
 /**
  * Delete a review
  * @param {string} reviewId - Review ID
