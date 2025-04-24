@@ -62,6 +62,7 @@ app.use(session({
     '/auth/steam/return',
     passport.authenticate('steam', { failureRedirect: '/' }),
     async (req, res) => {
+        console.log('Steam return, steamId=', req.user.steamId);
         const steamId = req.user.steamId;
         const ownedResp = await axios.get(
           'http://api.steampowered.com/IPlayerService/GetOwnedGames/v1/', {
@@ -74,6 +75,7 @@ app.use(session({
           }
         );
         const games = ownedResp.data.response.games || [];
+        console.log(`get ${games.length} games`);
         const libraryIds = [];
     
         for (const g of games) {
