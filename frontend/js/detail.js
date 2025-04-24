@@ -36,14 +36,14 @@ import {
   /* ----------------- UI helpers ----------------- */
   function fillGameInfo(game) {
     document.getElementById('gameImage').style.backgroundImage =
-      `url('${game.imageUrl || '../images/placeholder.jpg'}')`;
+      `url('${game.cover_url || '../images/placeholder.jpg'}')`;
   
     document.getElementById('gameTitle').textContent       = game.title;
     document.getElementById('gameGenre').textContent       = `Genre: ${game.genre}`;
     document.getElementById('gamePlatform').textContent    = `Platform: ${game.platform || 'N/A'}`;
     const ratingContainer = document.getElementById('gameRating');
     ratingContainer.innerHTML = renderStarRating(game.rating || 0);
-    document.getElementById('gameDescription').textContent = game.description || 'No description.';
+    document.getElementById('gameDescription').textContent = game.describe || 'No description.';
   }
   
   /* ---------- favourites ---------- */
