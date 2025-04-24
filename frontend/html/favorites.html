@@ -6,6 +6,9 @@
     <title>My Favorites - GameRec</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script>
+    window.FRONTEND_URL = location.origin;
+  </script>
 </head>
 <body class="fav-page">
     <nav class="navbar">
@@ -32,11 +35,29 @@
             </div>
         </div>
 
-        <section class="favorites-section" id="favoritesSection" style="display: none;">
+        <div id="confirmImport" class="confirm-import" style="display: none; padding:1rem;">
+            <h2>Imported Your Steam Library</h2>
+            <div id="libraryList" class="game-grid"></div>
+            <div style="margin-top:1rem;">
+              <button id="addAllBtn" class="btn btn--primary">Add All to Favorites</button>
+              <button id="skipBtn"  class="btn btn--secondary">Skip</button>
+            </div>
+          </div>
+      
+          <section class="favorites-section" id="favoritesSection" style="display: none;">
             <h1 class="page-title">My Favorite Games</h1>
+            <div class="import-container">
+              <a
+                id="importSteamBtn"
+                class="btn btn--secondary"
+                href="http://localhost:5000/auth/steam?returnUrl=http://localhost:5500/favorites.html?imported=1"
+              >
+                <i class="fab fa-steam"></i> Import Steam Library
+              </a>
+            </div>
             <section class="game-grid" id="favoritesList"></section>
-        </section>
-    </main>
+          </section>
+        </main>
 
     <script src="../js/favorites.js" type="module"></script>
     <script src="../api.js" type="module"></script>
