@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorites - GameRec</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script>
+    window.FRONTEND_URL = location.origin;
+  </script>
+</head>
+<body class="fav-page">
+    <nav class="navbar">
+        <div class="navbar__container">
+            <a href="#" class="navbar__logo">GameRec</a>
+            <div class="navbar__links">
+                <a href="../../main.html" class="navbar__link">Home</a>
+                <a href="search.html" class="navbar__link">Search</a>
+                <a href="#" class="navbar__link active">Favorites</a>
+                <div class="navbar__auth" id="authSection">
+                    <a href="login.html" class="btn btn--login">Login</a>
+                    <a href="register.html" class="btn btn--primary">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="auth-prompt" id="loginPrompt" style="display: none;">
+            <div class="auth-prompt__content">
+                <h2>Please Login to View Favorites</h2>
+                <p>Your favorite games will be saved and synced across devices</p>
+                <a href="login.html" class="btn btn--primary btn--large">Login Now</a>
+            </div>
+        </div>
+
+        <div id="confirmImport" class="confirm-import" style="display: none; padding:1rem;">
+            <h2>Imported Your Steam Library</h2>
+            <div id="libraryList" class="game-grid"></div>
+            <div style="margin-top:1rem;">
+              <button id="addAllBtn" class="btn btn--primary">Add All to Favorites</button>
+              <button id="skipBtn"  class="btn btn--secondary">Skip</button>
+            </div>
+          </div>
+      
+          <section class="favorites-section" id="favoritesSection" style="display: none;">
+            <h1 class="page-title">My Favorite Games</h1>
+            <div class="import-container">
+              <a
+                id="importSteamBtn"
+                class="btn btn--secondary"
+                href="http://localhost:5000/auth/steam?returnUrl=http://localhost:5500/favorites.html?imported=1"
+              >
+                <i class="fab fa-steam"></i> Import Steam Library
+              </a>
+            </div>
+            <section class="game-grid" id="favoritesList"></section>
+          </section>
+        </main>
+
+    <script src="../js/favorites.js" type="module"></script>
+    <script src="../api.js" type="module"></script>
+</body>
+</html>

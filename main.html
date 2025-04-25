@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameRec - Discover Your Next Game</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="./frontend/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="home-page">
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="navbar__container">
-            <a href="/" class="navbar__logo">GameRec</a>
+            <a href="#" class="navbar__logo">GameRec</a>
             <div class="navbar__links">
-                <a href="#home" class="navbar__link active">Home</a>
-                <a href="#search" class="navbar__link">Search</a>
-                <a href="#favorites" class="navbar__link">Favorites</a>
+                <a href="#" class="navbar__link active">Home</a>
+                <a href="./frontend/html/search.html" class="navbar__link">Search</a>
+                <a href="./frontend/html/favorites.html" class="navbar__link">Favorites</a>
                 <div class="navbar__auth">
-                    <a href="#login" class="btn btn--login">Login</a>
-                    <a href="#signup" class="btn btn--primary">Sign Up</a>
+                    <a href="frontend/html/login.html" class="btn btn--login">Login</a>
+                    <a href="./frontend/html/register.html" class="btn btn--primary">Sign Up</a>
                 </div>
             </div>
         </div>
@@ -26,52 +26,14 @@
 
     <!-- Main Content -->
     <main class="container">
-        <!-- Search Section -->
-        <section class="search-section">
-            <div class="search-box">
-                <input type="text" placeholder="Search games...">
-                <button class="btn btn--primary">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            <div class="filters">
-                <select class="filter-select">
-                    <option>All Genres</option>
-                    <option>Action</option>
-                    <option>RPG</option>
-                </select>
-                <select class="filter-select">
-                    <option>Any Rating</option>
-                    <option>4+ Stars</option>
-                    <option>3+ Stars</option>
-                </select>
-            </div>
-        </section>
-
-        <!-- Game Grid -->
-        <section class="game-grid">
-            <!-- Game Card 1 -->
-            <div class="game-card">
-                <div class="game-card__image" style="background-image: url('placeholder.jpg');"></div>
-                <div class="game-card__content">
-                    <h3 class="game-card__title">Game Title</h3>
-                    <div class="game-card__meta">
-                        <span class="rating">★★★★☆</span>
-                        <span class="genre">Action</span>
-                    </div>
-                    <p class="game-card__description">Example description</p>
-                    <div class="game-card__actions">
-                        <button class="btn btn--icon"><i class="far fa-heart"></i></button>
-                        <button class="btn btn--primary">Details</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- More game cards can be added here -->
-        </section>
+        <!----- Search bar removed; home page now only shows recommendations ----->
+    
+        <!-- Recommendations list -->
+        <section class="game-grid" id="recommendGrid"></section>
     </main>
 
     <!-- Scripts -->
-    <script src="app.js"></script>
+    <script src="./frontend/api.js" type="module"></script>
+    <script src="./frontend/js/main.js" type="module"></script>
 </body>
 </html>
