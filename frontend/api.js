@@ -111,6 +111,13 @@ export const getGames = () => request('/games');
 export const getGameById = (gameId) => request(`/games/${gameId}`);
 
 /**
+ * Get game recommendations for a user based on their favorites
+ * @param {string} userId - User ID
+ * @returns {Promise<Array>} List of recommended games
+ */
+export const getRecommendedGames = (userId) => request(`/games/recommend/${userId}`);
+
+/**
  * Create a new game
  * @param {object} data - Game data
  * @returns {Promise<object>} Created game

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Game = require("../models/game");
+const User = require("../models/user");
 
 // get all the games 
 router.get("/", async (req, res) => {
@@ -68,6 +69,69 @@ router.delete("/:id", async (req, res) => {
         const deletedGame = await Game.findByIdAndDelete(req.params.id);
         if (!deletedGame) return res.status(404).json({ message: "Game not found." });
         res.json({ message: "Game deleted successfully." });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Get recommended games
+router.get("/recommend/:userId", async (req, res) => {
+    try {
+        // Get user data
+        const user = await User.findById(req.params.userId).populate('favorites');
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // If user has no favorite games, return top-rated games
+        if (!user.favorites || user.favorites.length === 0) {
+            const topRatedGames = await Game.find().sort({ rating: -1 }).limit(10);
+            return res.json(topRatedGames);
+        }
+        
+        // Collect genre preferences from user's favorite games
+        const genrePreferences = {};
+        user.favorites.forEach(game => {
+            if (game.genre && game.genre.length > 0) {
+                game.genre.forEach(g => {
+                    if (!genrePreferences[g]) {
+                        genrePreferences[g] = 0;
+                    }
+                    genrePreferences[g] += 1;
+                });
+            }
+        });
+        
+        // Sort genres by preference count (descending order)
+        const sortedGenres = Object.keys(genrePreferences).sort(
+            (a, b) => genrePreferences[b] - genrePreferences[a]
+        );
+        
+        // If no valid genre preferences, return top-rated games
+        if (sortedGenres.length === 0) {
+            const topRatedGames = await Game.find().sort({ rating: -1 }).limit(10);
+            return res.json(topRatedGames);
+        }
+        
+        // Get IDs of already favorited games to exclude them
+        const favoritesIds = user.favorites.map(game => game._id.toString());
+        
+        // Find recommendations based on user's preferred genres
+        const recommendations = await Game.find({
+            _id: { $nin: favoritesIds }, // Exclude already favorited games
+            genre: { $in: sortedGenres.slice(0, 3) } // Use top 3 preferred genres
+        }).sort({ rating: -1 }).limit(10);
+        
+        // If we don't have enough recommendations, add some high-rated games
+        if (recommendations.length < 10) {
+            const additionalRecommendations = await Game.find({
+                _id: { $nin: [...favoritesIds, ...recommendations.map(r => r._id.toString())] }
+            }).sort({ rating: -1 }).limit(10 - recommendations.length);
+            
+            recommendations.push(...additionalRecommendations);
+        }
+        
+        res.json(recommendations);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

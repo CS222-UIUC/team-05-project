@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Recommendations - GameRec</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Recommended Games For You</h1>
+        <nav>
+            <ul>
+                <li><a href="../../main.html">Home</a></li>
+                <li><a href="search.html">Search</a></li>
+                <li><a href="favorites.html">Favorites</a></li>
+                <li id="loginNav"><a href="login.html">Login</a></li>
+                <li id="logoutNav" style="display: none;"><a href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="recommendations-container">
+            <h2>Based On Your Interests</h2>
+            <p class="recommendation-info">Based on your favorite game genres, we recommend the following games:</p>
+            <div id="recommendedGames" class="game-grid">
+                <!-- Recommended games will be dynamically loaded here -->
+                <p class="loading">Loading...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 GameRec - Your Personalized Game Recommendation Platform</p>
+    </footer>
+
+    <script type="module">
+        import { getRecommendedGames } from '../api.js';
+
+        // Check user login status
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userId = localStorage.getItem('userId');
+            const username = localStorage.getItem('username');
+            
+            // Update navigation menu display
+            if (userId && username) {
+                document.getElementById('loginNav').style.display = 'none';
+                document.getElementById('logoutNav').style.display = 'block';
+                loadRecommendations(userId);
+            } else {
+                // Redirect non-logged in users to login page
+                window.location.href = 'login.html';
+            }
+            
+            // Handle logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('userId');
+                localStorage.removeItem('username');
+                window.location.href = 'login.html';
+            });
+        });
+        
+        // Load recommended games
+        async function loadRecommendations(userId) {
+            try {
+                const recommendedGames = await getRecommendedGames(userId);
+                const gamesContainer = document.getElementById('recommendedGames');
+                
+                // Clear loading indicator
+                gamesContainer.innerHTML = '';
+                
+                if (recommendedGames.length === 0) {
+                    gamesContainer.innerHTML = '<p>No recommended games yet. Please add some games to your favorites first.</p>';
+                    return;
+                }
+                
+                // Display recommended games
+                recommendedGames.forEach(game => {
+                    const gameCard = createGameCard(game);
+                    gamesContainer.appendChild(gameCard);
+                });
+            } catch (error) {
+                console.error('Failed to load recommendations:', error);
+                document.getElementById('recommendedGames').innerHTML = 
+                    '<p class="error">Failed to get recommended games. Please try again later.</p>';
+            }
+        }
+        
+        // Create game card element
+        function createGameCard(game) {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            
+            const genres = Array.isArray(game.genre) ? game.genre.join(', ') : game.genre || 'Uncategorized';
+            const rating = game.rating ? `${game.rating}/5` : 'Not rated';
+            
+            card.innerHTML = `
+                <h3>${game.title}</h3>
+                <p class="genre">Genre: ${genres}</p>
+                <p class="rating">Rating: ${rating}</p>
+                <a href="detail.html?id=${game._id}" class="view-details">View Details</a>
+            `;
+            
+            return card;
+        }
+    </script>
+</body>
+</html> 

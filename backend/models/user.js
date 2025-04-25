@@ -1,3 +1,16 @@
+/**
+ * User Model
+ * 
+ * Defines the schema for user accounts in the database.
+ * Manages user authentication data and profile information.
+ * 
+ * The schema typically includes:
+ * - Username (for display and identification)
+ * - Password (stored securely with hashing)
+ * - Optional profile fields (email, avatar, etc.)
+ * - Authentication metadata (registration date, last login)
+ * - References to user's favorite games and reviews
+ */
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
