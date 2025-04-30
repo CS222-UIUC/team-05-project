@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Game = require("../models/game");
+const User = require('../models/user');
 
 // get all the games 
 router.get("/", async (req, res) => {
@@ -68,6 +69,62 @@ router.delete("/:id", async (req, res) => {
         const deletedGame = await Game.findByIdAndDelete(req.params.id);
         if (!deletedGame) return res.status(404).json({ message: "Game not found." });
         res.json({ message: "Game deleted successfully." });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// recommendation algorithm
+router.get("/recommend/content/:userId", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId)
+            .populate("favorites", "genre rating");
+
+        if (!user) return res.status(404).json({ message: "User not found." });
+
+        // back to default rating list if no fav games
+        if (user.favorites.length === 0) {
+            const popularGames = await Game.find()
+                .sort({ rating: -1 })
+                .limit(10);
+            return res.json(popularGames);
+        }
+
+        // user genre weights
+        const genreWeights = {};
+        user.favorites.forEach(game => {
+            game.genre?.forEach(genre => {
+                genreWeights[genre] = (genreWeights[genre] || 0) + 1;
+            });
+        });
+
+        // recommend games excluding all fav games
+        const candidateGames = await Game.find({
+            _id: { $nin: user.favorites.map(g => g._id) }
+        });
+
+        // recommendation score
+        const scoredGames = candidateGames.map(game => {
+            const genreScore = game.genre.reduce(
+                (sum, genre) => sum + (genreWeights[genre] || 0),
+                0
+            );
+
+            const ratingScore = game.rating / 10;
+
+            // final weights
+            const finalScore = 0.7 * genreScore + 0.3 * ratingScore;
+
+            return { game, score: finalScore };
+        });
+
+        // top 10 games of rating high-to-low
+        const recommended = scoredGames
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 10)
+            .map(item => item.game);
+
+        res.json(recommended);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

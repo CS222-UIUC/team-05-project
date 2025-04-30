@@ -162,3 +162,10 @@ export const createReview = (user_id, game_id, rating, review_text) =>
  */
 export const deleteReview = (reviewId) => request(`/reviews/${reviewId}`, 'DELETE');
 
+/**
+ * 
+ * @param {string} userId - User ID
+ * @returns {Promise<Array>} 10 of suitable recommended games
+ */
+export const getRecommendations = (userId) => request(`/games/recommend/content/${userId}`, 'GET');
+
