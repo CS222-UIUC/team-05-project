@@ -26,49 +26,10 @@
 
     <!-- Main Content -->
     <main class="container">
-        <!-- Search Section -->
-        <section class="search-section">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search games..." />
-                <button class="btn btn--primary">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-                <select id="genreFilter" class="filter-select">
-                    <option value="">All Genres</option>
-                    <option value="Action">Action</option>
-                    <option value="Adventure">Adventure</option>
-                    <option value="RPG">RPG</option>
-                </select>
-                <select id="ratingFilter" class="filter-select">
-                    <option value="0">Any Rating</option>
-                    <option value="4">4+ Stars</option>
-                    <option value="3">3+ Stars</option>
-                </select>
-            </div>
-        </section>
-
-        <!-- Game Grid -->
-        <section class="game-grid">
-            <!-- Game Card 1 -->
-            <div class="game-card">
-                <div class="game-card__image" style="background-image: url('placeholder.jpg');"></div>
-                <div class="game-card__content">
-                    <h3 class="game-card__title">Game Title</h3>
-                    <div class="game-card__meta">
-                        <span class="rating">★★★★☆</span>
-                        <span class="genre">Action</span>
-                    </div>
-                    <p class="game-card__description">Example description</p>
-                    <div class="game-card__actions">
-                        <button class="btn btn--icon"><i class="far fa-heart"></i></button>
-                        <a class="btn btn--primary" style="text-decoration: none;" href="./frontend/html/detail.html?id=<actual Mongo _id>">Details</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- More game cards can be added here -->
-        </section>
+        <!----- Search bar removed; home page now only shows recommendations ----->
+    
+        <!-- Recommendations list -->
+        <section class="game-grid" id="recommendGrid"></section>
     </main>
 
     <!-- Scripts -->
