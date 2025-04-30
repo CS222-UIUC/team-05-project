@@ -45,14 +45,15 @@ function cardHTML (g, favIds) {
   return `
     <div class="game-card">
       <div class="game-card__image"
-           style="background-image:url('${g.imageUrl || 'placeholder.jpg'}')"></div>
+           style="background-image:url('${g.cover_url || 'placeholder.jpg'}')"></div>
       <div class="game-card__content">
-        <h3 class="game-card__title">${g.title}</h3>
+        <h3 class="game-card__title">
+          <span class="game-card__title-text">${g.title}</span>
+        </h3>
         <div class="game-card__meta">
-          <span class="rating">${(g.rating || 0).toFixed(1)} ${renderStars(g.rating)}</span>
-          <span class="genre">${g.genre || ''}</span>
+          <span class="rating">${(g.rating || 0).toFixed(2)} ${renderStars(g.rating)}</span>
         </div>
-        <p class="game-card__description">${(g.description || '').slice(0, 90)}…</p>
+        <p class="game-card__description">${(g.genre || '').slice(0, 90)}</p>
         <div class="game-card__actions">
           <button class="btn btn--icon favorite-btn" data-id="${g._id}">
             <i class="${icon} fa-heart"></i>

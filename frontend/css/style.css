@@ -136,8 +136,23 @@ body {
 }
 
 .game-card__title {
-    margin-bottom: 0.5rem;
-}
+    line-height: 1.2em;
+    height: calc(1.2em * 2);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+.game-card__title-text {
+    line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+  }
+  
 
 .game-card__meta {
     display: flex;
@@ -350,7 +365,7 @@ body:not(.home-page) .navbar {
 }
 
 .game-detail__image {
-    width: 350px;
+    width: 748px;
     height: 350px;
     background-size: cover;
     background-position: center;
