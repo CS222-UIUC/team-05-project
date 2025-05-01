@@ -3,7 +3,8 @@ import {
   getGames,
   getFavorites,
   addFavorite,
-  removeFavorite
+  removeFavorite,
+  getRecommendations
 } from '../api.js';
 
 /* ---------------- navbar ---------------- */
@@ -67,24 +68,44 @@ function cardHTML (g, favIds) {
 }
 
 /* ---------------- build the page ---------------- */
-async function buildPage () {
+async function buildPage() {
   const token   = localStorage.getItem('gameRecToken');
   const userId  = localStorage.getItem('userId');
   const uname   = localStorage.getItem('username') || 'there';
-  const allGames = (await getGames()).sort((a,b) => (b.rating||0) - (a.rating||0));
 
+  // Fetch favorites (if any) and all games
   let favs = [];
   if (token && userId) {
-    try { favs = await getFavorites(userId); } catch { /* ignore */ }
+    try { favs = await getFavorites(userId); }
+    catch (e) { console.warn(e); }
+  }
+  const allGames = (await getGames()).sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  const favIds   = new Set(favs.map(f => f._id));
+
+  // Recommendations: only if user has favorites
+  let recs = [];
+  if (favs.length) {
+    try {
+      recs = await getRecommendations(userId);  // server returns up to 10, excludes favs
+    } catch (e) {
+      console.warn('rec error', e);
+    }
   }
 
-  /* ----- decide intro text ----- */
+  // Build the "All Games" list (always shown, excluding favorites)
+  const allList = allGames.filter(g => !favIds.has(g._id));
+
+  // --- Clear and build content ---
+  grid.innerHTML = '';       // clear all cards
+  intro.innerHTML = '';      // clear intro prompt
+
+  // 1) Intro prompt or greeting
   if (!token || !userId) {
     intro.innerHTML = `
       <div class="auth-prompt" style="display:flex;">
         <div class="auth-prompt__content">
           <h2>Welcome to GameRec</h2>
-          <p>Hi, do you want to log in to get personalized recommendations?</p>
+          <p>Log in to get personalized recommendations!</p>
           <a href="./frontend/html/login.html" class="btn btn--primary btn--large">Login Now</a>
         </div>
       </div>`;
@@ -93,30 +114,34 @@ async function buildPage () {
       <div class="auth-prompt" style="display:flex;">
         <div class="auth-prompt__content">
           <h2>Hi ${uname}</h2>
-          <p>Add some favourite games to get personalized recommendations!</p>
+          <p>Add favorites to see tailored recommendations.</p>
           <a href="./frontend/html/favorites.html" class="btn btn--primary btn--large">Go to Favorites</a>
         </div>
       </div>`;
-  } else {
-    intro.innerHTML = `<h2>Hi ${uname}, recommended & high-rated games for you</h2>`;
   }
 
-  /* ----- build recommendation RULES (if any) ----- */
-  const rules = favs.map(f => ({ genre: f.genre, rating: f.rating || 0 }));
-  const recMap = new Map();
-  rules.forEach(({ genre, rating }) => {
-    allGames.forEach(g => {
-      if (g.genre === genre && (g.rating || 0) >= rating) recMap.set(g._id, g);
+  // 2) Recommendations section (if any)
+  if (recs.length) {
+    grid.insertAdjacentHTML('beforeend',
+      `<h2 style="grid-column:1/-1; margin:2rem 0 1rem;">
+        Hi ${uname}!
+        Here are the 10 Recommended games personalized for You!
+       </h2>`);
+    recs.forEach(game => {
+      grid.insertAdjacentHTML('beforeend', cardHTML(game, favIds));
     });
+  }
+
+  // 3) All Games section
+  grid.insertAdjacentHTML('beforeend',
+    `<h2 style="grid-column:1/-1; margin:2rem 0 1rem;">
+       All Games (sorted by rating, excluding your favorite games)
+     </h2>`);
+  allList.forEach(game => {
+    grid.insertAdjacentHTML('beforeend', cardHTML(game, favIds));
   });
-  const favIds = new Set(favs.map(f => f._id));
 
-  /* ----- choose list to show under intro ----- */
-  const listToShow = recMap.size ? Array.from(recMap.values())
-                                 : allGames;   // fallback: every game
-  grid.innerHTML   = '';
-  listToShow.forEach(g => grid.insertAdjacentHTML('beforeend', cardHTML(g, favIds)));
-
+  // 4) Hook favorite toggles
   hookFavouriteButtons(favIds);
 }
 

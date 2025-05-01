@@ -17,11 +17,11 @@ connectDB();
 app.use(express.json());
 app.use(cors({
     origin: (origin, cb) => {
-    // allow requests from Live-Server, vite, 127.0.0.1, localhost, etc.
-    if (!origin || /^(http:\/\/)?(localhost|127\.0\.0\.1):\d{4,5}$/i.test(origin)) {
-    return cb(null, true);
-    }
-    cb(new Error('CORS not allowed from ' + origin));
+      // allow requests from Live-Server, vite, 127.0.0.1, localhost, etc.
+      if (!origin || /^(http:\/\/)?(localhost|127\.0\.0\.1):\d{4,5}$/i.test(origin)) {
+        return cb(null, true);
+      }
+      cb(new Error('CORS not allowed from ' + origin));
     },
     credentials: true,
     optionsSuccessStatus: 200 // some older browsers choke on 204
