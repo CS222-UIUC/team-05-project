@@ -95,15 +95,14 @@ router.get("/:userId", async (req, res) => {
 
 // update user info
 router.put("/:userId", async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
       const user = await User.findById(req.params.userId);
       if (!user) return res.status(404).json({ message: "User not found." });
 
-      // update username and email
+      // update username
       if (username) user.username = username;
-      if (email) user.email = email;
 
       // if update password, hash encode again
       if (password) {
@@ -116,7 +115,6 @@ router.put("/:userId", async (req, res) => {
       res.json({
           userId: updatedUser._id,
           username: updatedUser.username,
-          email: updatedUser.email
       });
   } catch (err) {
       res.status(500).json({ message: err.message });

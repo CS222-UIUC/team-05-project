@@ -91,7 +91,6 @@ import { updateUser } from '../api.js';
 
 await updateUser(userId, {
     username: "new_username",
-    email: "new_email@example.com",
     password: "newpassword123"
 });
 */
